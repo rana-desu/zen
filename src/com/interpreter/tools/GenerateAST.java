@@ -14,16 +14,15 @@ public class GenerateAST {
 
         String outputDir = args[0];
         defineAST(outputDir, "Expr", Arrays.asList(
-       "Binary   : Expr left, Token operator, Expr right" ,
-            "Grouping : Expr expression",
-            "Literal  : Object value",
-            "Unary    : Token operator, Expr right"
-        ));
+                "Binary   : Expr left, Token operator, Expr right",
+                "Grouping : Expr expression",
+                "Literal  : Object value",
+                "Unary    : Token operator, Expr right"));
     }
 
     private static void defineAST(
-          String outputDir, String baseName, List<String> types) 
-          throws IOException {
+            String outputDir, String baseName, List<String> types)
+            throws IOException {
         String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 
@@ -32,10 +31,10 @@ public class GenerateAST {
         writer.println("import java.util.List;");
         writer.println();
         writer.println("abstract class " + baseName + " {");
-        
+
         // define the visitor interface after initialising the abstract class.
         defineVisitor(writer, baseName, types);
-        
+
         // AST classes.
         for (String type : types) {
             String className = type.split(":")[0].trim();
@@ -44,7 +43,7 @@ public class GenerateAST {
         }
 
         // defining the accept() method for the base class.
-		writer.println();
+        writer.println();
         writer.println("    abstract <R> R accept(Visitor<R> visitor);");
 
         writer.println("}");
@@ -56,18 +55,18 @@ public class GenerateAST {
 
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
-            writer.println("        R visit" + typeName + baseName + "(" + 
-                typeName + " " + baseName.toLowerCase() + ");");
+            writer.println("        R visit" + typeName + baseName + "(" +
+                    typeName + " " + baseName.toLowerCase() + ");");
         }
 
         writer.println("    }");
     }
 
     private static void defineType(
-          PrintWriter writer, String baseName,
-          String className, String fieldList) {
+            PrintWriter writer, String baseName,
+            String className, String fieldList) {
         writer.println("    static class " + className + " extends " +
-            baseName + " {");
+                baseName + " {");
 
         // constructor.
         writer.println("        " + className + "(" + fieldList + ") {");
@@ -85,7 +84,7 @@ public class GenerateAST {
         writer.println();
         writer.println("        @Override");
         writer.println("        <R> R accept(Visitor<R> visitor) {");
-        writer.println("        return visitor.visit" + className + baseName + "(this);");
+        writer.println("            return visitor.visit" + className + baseName + "(this);");
         writer.println("        }");
 
         // fields.
@@ -96,5 +95,5 @@ public class GenerateAST {
 
         writer.println("    }");
     }
-    
+
 }
