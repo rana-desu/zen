@@ -40,6 +40,7 @@ class ASTPrinter implements Expr.Visitor<String> {
         return builder.toString();
     }
 
+    /* 
     public static void main(String[] args) {
         Expr expression = new Expr.Binary(
             new Expr.Unary(
@@ -54,6 +55,7 @@ class ASTPrinter implements Expr.Visitor<String> {
 
         System.out.println(new ASTPrinter().print(expression));
     }
+    */
 
     /*
      * TODO:

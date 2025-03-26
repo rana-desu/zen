@@ -24,35 +24,37 @@ class Scanner {
     private static final Map<String, TokenType> keywords;
     static {
         keywords = new HashMap<>();
-        keywords.put("and",    AND);
-        keywords.put("class",  CLASS);
-        keywords.put("else",   ELSE);
-        keywords.put("false",  FALSE);
-        keywords.put("for",    FOR);
-        keywords.put("fun",    FUN);
-        keywords.put("if",     IF);
-        keywords.put("none",   NONE);
-        keywords.put("or",     OR);
-        keywords.put("print",  PRINT);
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("none", NONE);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
         keywords.put("return", RETURN);
-        keywords.put("super",  SUPER);
-        keywords.put("this",   THIS);
-        keywords.put("true",   TRUE);
-        keywords.put("var",    VAR);
-        keywords.put("while",  WHILE);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("true", TRUE);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
     }
 
-    /* raw source code is stored as a simple string.
-       tokens ArrayList is used to store generated tokens,
-       as the scanner progresses through the source code.
+    /*
+     * raw source code is stored as a simple string.
+     * tokens ArrayList is used to store generated tokens,
+     * as the scanner progresses through the source code.
      */
     Scanner(String source) {
         this.source = source;
     }
 
-    /* scans through the entire string until it reaches the end,
-       adding the generated token to the ArrayList,
-       then it appends one final EOF token at the end. 
+    /*
+     * scans through the entire string until it reaches the end,
+     * adding the generated token to the ArrayList,
+     * then it appends one final EOF token at the end.
      */
     List<Token> scanTokens() {
         while (!isAtEnd()) {
@@ -63,20 +65,40 @@ class Scanner {
         tokens.add(new Token(EOF, "", null, line));
         return tokens;
     }
-    
+
     private void scanToken() {
         char c = advance();
         switch (c) {
-            case '(': addToken(LEFT_PAREN); break;
-            case ')': addToken(RIGHT_PAREN); break;
-            case '{': addToken(LEFT_BRACE); break;
-            case '}': addToken(RIGHT_BRACE); break;
-            case ',': addToken(COMMA); break;
-            case '.': addToken(DOT); break;
-            case '-': addToken(MINUS); break;
-            case '+': addToken(PLUS); break;
-            case ';': addToken(SEMICOLON); break;
-            case '*': addToken(STAR); break;
+            case '(':
+                addToken(LEFT_PAREN);
+                break;
+            case ')':
+                addToken(RIGHT_PAREN);
+                break;
+            case '{':
+                addToken(LEFT_BRACE);
+                break;
+            case '}':
+                addToken(RIGHT_BRACE);
+                break;
+            case ',':
+                addToken(COMMA);
+                break;
+            case '.':
+                addToken(DOT);
+                break;
+            case '-':
+                addToken(MINUS);
+                break;
+            case '+':
+                addToken(PLUS);
+                break;
+            case ';':
+                addToken(SEMICOLON);
+                break;
+            case '*':
+                addToken(STAR);
+                break;
 
             case '!':
                 addToken(match('=') ? NOT_EQUAL : NOT);
@@ -86,29 +108,35 @@ class Scanner {
                 break;
             case '>':
                 addToken(match('=') ? GREATER_EQUAL : GREATER);
+                break;
             case '<':
-                addToken(match('-') ? LESS_EQUAL : LESS);
-            
+                addToken(match('=') ? LESS_EQUAL : LESS);
+                break;
+
             case '/':
                 // if "//", then it's a comment
                 // a comment goes until EOL.
                 if (match('/')) {
-                    while (peek() != '\n' && !isAtEnd()) advance();
+                    while (peek() != '\n' && !isAtEnd())
+                        advance();
                 } else {
                     addToken(SLASH);
                 }
-            
+                break;
+
             // ignore whitespace.
             case ' ':
             case '\r':
             case '\t':
                 break;
-            
+
             case '\n':
                 line++;
                 break;
 
-            case '"': string(); break;
+            case '"':
+                string();
+                break;
 
             default:
                 if (isDigit(c)) {
@@ -121,7 +149,7 @@ class Scanner {
                 break;
         }
     }
-    
+
     private boolean isAtEnd() {
         return current >= source.length();
     }
@@ -146,7 +174,8 @@ class Scanner {
         // if there's a newline, then increment line counter
         // and advance to next character.
         while (peek() != '"' && !isAtEnd()) {
-            if (peek() != '\n') line++;
+            if (peek() != '\n')
+                line++;
             advance();
         }
 
@@ -165,7 +194,8 @@ class Scanner {
 
     private void number() {
         // keep advancing until the lookahead character is a digit.
-        while (isDigit(peek())) advance();
+        while (isDigit(peek()))
+            advance();
 
         // check for a fractional part,
         if (peek() == '.' && isDigit(peekNext())) {
@@ -173,7 +203,8 @@ class Scanner {
             advance();
 
             // keep advancing after decimal until digits exist.
-            while (isDigit(peek())) advance();
+            while (isDigit(peek()))
+                advance();
         }
 
         // parses the string into a numeric value and then adds the token and literal.
@@ -183,18 +214,22 @@ class Scanner {
     // identifier also handles reserved keywords,
     // since they are identifiers reserved for the interpreter's use.
     private void identifier() {
-        while (isAlphaNumeric(peek())) advance();
+        while (isAlphaNumeric(peek()))
+            advance();
 
         String lexeme = source.substring(start, current);
         TokenType type = keywords.get(lexeme);
-        if (type == null) type = IDENTIFIER;
+        if (type == null)
+            type = IDENTIFIER;
 
         addToken(type);
     }
 
     private boolean match(char expectedNextChar) {
-        if (isAtEnd()) return false;
-        if (source.charAt(current) != expectedNextChar) return false;
+        if (isAtEnd())
+            return false;
+        if (source.charAt(current) != expectedNextChar)
+            return false;
 
         current++;
         return true;
@@ -202,13 +237,15 @@ class Scanner {
 
     // this is a lookahead method, it doesn't consume chars unlike advance()
     private char peek() {
-        if (isAtEnd()) return '\0';
+        if (isAtEnd())
+            return '\0';
         return source.charAt(current);
     }
 
     // scanner looksahead at most for two characters.
     private char peekNext() {
-        if (current + 1 >= source.length()) return '\0';
+        if (current + 1 >= source.length())
+            return '\0';
         return source.charAt(current + 1);
     }
 
@@ -219,7 +256,7 @@ class Scanner {
 
     private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') ||
-               (c >= 'A' && c <= 'Z') ||
+                (c >= 'A' && c <= 'Z') ||
                 c == '_';
     }
 

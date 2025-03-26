@@ -14,7 +14,7 @@ public class Zen {
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
-            System.exit(64); 
+            System.exit(64);
         } else if (args.length == 1) {
             runFile(args[0]);
         } else {
@@ -29,7 +29,8 @@ public class Zen {
         run(new String(bytes, Charset.defaultCharset()));
 
         // indicates an error in the exit-code.
-        if (hadError) System.exit(65);
+        if (hadError)
+            System.exit(65);
     }
 
     // interactive mode, if interpreter is executed without any args
@@ -40,9 +41,10 @@ public class Zen {
         for (;;) {
             System.out.print("> ");
             String line = reader.readLine();
-            
+
             // if end-of-line/ctrl+d, readLine retunrs null
-            if (line == null) break;
+            if (line == null)
+                break;
             run(line);
             hadError = false;
         }
@@ -52,9 +54,20 @@ public class Zen {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        /*
+         * prints scanned tokens after lexxing.
+         * for (Token token : tokens) {
+         * System.out.println(token);
+         * }
+         */
+
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        if (hadError)
+            return;
+
+        System.out.println(new ASTPrinter().print(expression));
     }
 
     // it's a good engineering practice to:
@@ -69,4 +82,17 @@ public class Zen {
         hadError = true;
     }
 
+    /*
+     * in case a syntax error is encountered,
+     * detect the error, and report it to the user.
+     * 
+     * tokens are used to track locations throughout the code.
+     */
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
+    }
 }
