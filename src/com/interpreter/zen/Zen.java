@@ -9,7 +9,10 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Zen {
+    // static so that the REPL session utilises the same instance of the interpreter
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false; // flag to ensure execution of error-free code
+    static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -31,6 +34,8 @@ public class Zen {
         // indicates an error in the exit-code.
         if (hadError)
             System.exit(65);
+        if (hadRuntimeError)
+            System.exit(70);
     }
 
     // interactive mode, if interpreter is executed without any args
@@ -67,7 +72,8 @@ public class Zen {
         if (hadError)
             return;
 
-        System.out.println(new ASTPrinter().print(expression));
+        // System.out.println(new ASTPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     // it's a good engineering practice to:
@@ -94,5 +100,12 @@ public class Zen {
         } else {
             report(token.line, " at '" + token.lexeme + "'", message);
         }
+    }
+
+    static void runtimeError(RuntimeError error) {
+        System.err.println(error.getMessage() +
+            "\n[line " + error.token.line + "]");
+
+        hadRuntimeError = true;
     }
 }
