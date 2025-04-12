@@ -67,13 +67,13 @@ public class Zen {
          */
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         if (hadError)
             return;
 
         // System.out.println(new ASTPrinter().print(expression));
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     // it's a good engineering practice to:

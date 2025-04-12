@@ -14,7 +14,7 @@ javac -d target/ src/com/interpreter/zen/*.java
 ```
 
 3. Run the interpreter, can be used in two different modes:
-- Prompt-based mode, do not provide any arguments while running the interpreter.
+- Prompt-based or REPL mode, do not provide any arguments while running the interpreter.
 ```bash
 java -cp target com.interpreter.zen.Zen
 ```

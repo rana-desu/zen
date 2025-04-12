@@ -13,11 +13,24 @@ public class GenerateAST {
         }
 
         String outputDir = args[0];
+
+        // expression nodes
         defineAST(outputDir, "Expr", Arrays.asList(
-                "Binary   : Expr left, Token operator, Expr right",
-                "Grouping : Expr expression",
-                "Literal  : Object value",
-                "Unary    : Token operator, Expr right"));
+            "Assign   : Token name, Expr value",
+            "Binary   : Expr left, Token operator, Expr right",
+            "Grouping : Expr expression",
+            "Literal  : Object value",
+            "Unary    : Token operator, Expr right",
+            "Variable : Token name"
+        ));
+
+        // statement nodes
+        defineAST(outputDir, "Stmt", Arrays.asList(
+            "Block      : List<Stmt> statements",
+            "Expression : Expr expression",
+            "Print      : Expr expression",
+            "Var        : Token name, Expr initializer"
+        ));
     }
 
     private static void defineAST(
@@ -29,7 +42,7 @@ public class GenerateAST {
         writer.println("package com.interpreter.zen;");
         writer.println();
         writer.println("import java.util.List;");
-        writer.println();
+        // writer.println();
         writer.println("abstract class " + baseName + " {");
 
         // define the visitor interface after initialising the abstract class.
