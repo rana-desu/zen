@@ -1,10 +1,13 @@
+// global block.
 var a = "global a";
 var b = "global b";
 var c = "global c";
 {
+    // outer-inner block.
     var a = "outer a";
     var b = "outer b";
     {
+        // inner block.
         var a = "inner a";
         print a;
         print b;

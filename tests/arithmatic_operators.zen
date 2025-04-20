@@ -1,0 +1,31 @@
+var a = 1;
+var b = 2;
+
+// addition
+var c = a + b;
+print "A + B = ";
+print c;
+
+// subtraction
+c = a - b;
+print "A - B = ";
+print c;
+
+// division
+c = a / b;
+print "A / B = ";
+print c;
+
+// multiplication
+c = a * b;
+print "A * B = ";
+print c;
+
+// complex expressions
+// implemented by defining context-free grammar and precedence
+c = 5;
+var d = 100;
+
+var e = ((a + b) / d) * c;
+print "((A + B) / D) * C = ";
+print e;
